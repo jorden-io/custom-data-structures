@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 namespace ds
 {
     template <class T>
@@ -151,7 +152,7 @@ namespace ds
                 {
                     std::cout << "reallocated\n";
                     this->csize *= 2;
-                    ds::linked_list<int> *ll_buffer{new ds::linked_list<int>[csize] {}};
+                    ds::linked_list<T> *ll_buffer{new ds::linked_list<T>[csize] {}};
                     for (size_t i = 0; i < this->csize; i++)
                     {
                         if (!&ll_mem_con[i])
@@ -179,7 +180,7 @@ namespace ds
                 {
                     std::cout << "deallocated\n";
                     this->csize = this->clength + 2;
-                    ds::linked_list<int> *ll_buffer{new ds::linked_list<int>[csize] {}};
+                    ds::linked_list<T> *ll_buffer{new ds::linked_list<T>[csize] {}};
                     for (size_t i = 0; i < this->clength; i++)
                     {
                         *ll_buffer[i].val = std::move(*this->ll_mem_con[i].val);
@@ -197,24 +198,35 @@ namespace ds
                 return *ll_mem_con;
             };
         };
-        // ds::hash_map &delete_e(char *sv_i)
-        // {
-        //     this->csize *= 2;
-        //     ds::linked_list<int> *ll_buffer{new ds::linked_list<int>[csize] {}};
-        //     for (size_t i = 0; i < this->clength; i++)
-        //     {
-        //         ll_buffer[i].val = this->ll_mem_con[i].val;
-        //         // re:
-        //         if (!!this->ll_mem_con[i].next)
-        //         {
-        //             ll_buffer[i].next = this->ll_mem_con[i].next;
-        //             // if
-        //         };
-        //     };
-        //     delete[] (this->ll_mem_con);
-        //     this->ll_mem_con = ll_buffer;
-        //     return *this;
-        // };
+
+        ds::linked_list<T> &delete_e(char *sv_i)
+        {
+            this->clength--;
+            const char *key = this->ll_mem_con[hash(sv_i)].key;
+            ds::linked_list<T> *ll_buffer{new ds::linked_list<T>[csize] {}};
+            for (size_t i = 0; i < this->csize - 1; i++)
+            {
+                if (ll_mem_con[i].key != key)
+                {
+                    ll_buffer[i].val = this->ll_mem_con[i].val;
+                    if (!!this->ll_mem_con[i].next)
+                    {
+                        ll_buffer[i].next = this->ll_mem_con[i].next;
+                    };
+                };
+            };
+            delete[] (this->ll_mem_con);
+            this->ll_mem_con = ll_buffer;
+            return ll_mem_con;
+        };
+        int &power(int v, int vr)
+        {
+            for (int i = 0; i < vr - 1; i++)
+            {
+                v = v * v;
+            };
+            return v;
+        };
         unsigned int hash(char *s_val)
         {
             assert(std::strlen(s_val) != 0);
@@ -225,8 +237,7 @@ namespace ds
             unsigned int hash_v{0};
             for (size_t i = 0; i < std::strlen(s_val); i++)
             {
-                hash_v += s_val[i];
-                hash_v = (hash_v * s_val[i]) % this->csize;
+                hash_v += (s_val[i] * this->power(3, i)) % csize / 4;
             };
             return hash_v;
         };

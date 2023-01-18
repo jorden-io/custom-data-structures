@@ -1,0 +1,10 @@
+{
+  "files.associations": {
+    "*.scss": "scss",
+    "iostream": "cpp",
+    "cmath": "cpp",
+    "cstdio": "cpp",
+    "iosfwd": "cpp",
+    "vector": "cpp"
+  }
+}

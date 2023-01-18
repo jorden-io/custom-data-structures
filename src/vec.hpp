@@ -1,4 +1,6 @@
 #include <iostream>
+#include <initializer_list>
+#include <string>
 namespace ds
 {
     template <class T, size_t init_s = 2>
@@ -9,6 +11,14 @@ namespace ds
         {
             realloc,
             dealloc
+        };
+        friend std::ostream &operator<<(std::ostream &out, ds::vec<T> &v)
+        {
+            for (size_t i = 0; i < v.get_length(); i++)
+            {
+                out << v[i] << ", ";
+            };
+            return out;
         };
 
     private:
@@ -51,21 +61,24 @@ namespace ds
         };
 
     public:
-        int &operator[](int i)
+        T &operator[](T i)
         {
             return this->container[i];
-        };
-        friend std::ostream &operator<<(std::ostream &out, vec &v)
-        {
-            for (int i = 0; i < v.get_length(); i++)
-            {
-                out << v[i] << ", ";
-            };
-            return out;
         };
         vec() : cap(init_s)
         {
             this->drealloc(alloc_status::realloc);
+        };
+        vec(std::initializer_list<T> l)
+        {
+            int i{0};
+            for (auto e : l)
+            {
+                container[i] = e;
+                i++;
+                cap++;
+                length++;
+            };
         };
         vec(vec &v) : length(v.length), cap(v.cap)
         {
